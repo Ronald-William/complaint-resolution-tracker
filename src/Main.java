@@ -1,24 +1,18 @@
-import repository.ComplaintRepository;
-import service.ComplaintService;
 import model.Complaint;
+import service.ComplaintService;
 
 public class Main {
     public static void main(String[] args) {
 
-        ComplaintRepository repository = new ComplaintRepository();
-        ComplaintService service = new ComplaintService(repository);
+        ComplaintService service = new ComplaintService();
 
-        Complaint c1 = service.logComplaint(
-                "Electricity",
-                "Power outage in room 204"
-        );
+        Complaint c1 = new Complaint(1, "Internet", "No connectivity");
+        service.logComplaint(c1);
 
-        Complaint c2 = service.logComplaint(
-                "Plumbing",
-                "Water leakage in bathroom"
-        );
+        service.assignComplaint(1, "John-Handler");
+        service.resolveComplaint(1);
+        service.closeComplaint(1);
 
-        System.out.println(c1);
-        System.out.println(c2);
+        service.displayComplaints();
     }
 }
