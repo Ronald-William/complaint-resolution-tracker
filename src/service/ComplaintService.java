@@ -18,6 +18,20 @@ public class ComplaintService {
         }
     }
 
+    public void resolveComplaint(int complaintId) {
+        Complaint complaint = repository.findById(complaintId);
+        if (complaint != null) {
+            complaint.resolve();
+        }
+    }
+
+    public void closeComplaint(int complaintId) {
+        Complaint complaint = repository.findById(complaintId);
+        if (complaint != null) {
+            complaint.close();
+        }
+    }
+
     public void displayComplaints() {
         repository.findAll().forEach(System.out::println);
     }
