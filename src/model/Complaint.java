@@ -1,48 +1,60 @@
 package model;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Complaint {
+
     private int id;
     private String category;
     private String description;
+    private String handler;
     private ComplaintStatus status;
-    private String assignedTo;
-    private LocalDateTime createdAt;
-    private LocalDateTime resolvedAt;
+    private List<ComplaintHistory> history = new ArrayList<>();
 
     public Complaint(int id, String category, String description) {
         this.id = id;
         this.category = category;
         this.description = description;
         this.status = ComplaintStatus.OPEN;
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public void assignTo(String handler) {
-        this.assignedTo = handler;
-        this.status = ComplaintStatus.IN_PROGRESS;
-    }
-
-    public void resolve() {
-        if (status == ComplaintStatus.IN_PROGRESS) {
-            this.status = ComplaintStatus.RESOLVED;
-            this.resolvedAt = LocalDateTime.now();
-        }
-    }
-
-    public void close() {
-        if (status == ComplaintStatus.RESOLVED) {
-            this.status = ComplaintStatus.CLOSED;
-        }
+        addHistory("CREATED");
     }
 
     public int getId() {
         return id;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getHandler() {
+        return handler;
+    }
+
     public ComplaintStatus getStatus() {
         return status;
+    }
+
+    public void setHandler(String handler) {
+        this.handler = handler;
+    }
+
+    // ✅ THIS IS WHAT WAS MISSING
+    public void setStatus(ComplaintStatus status) {
+        this.status = status;
+    }
+
+    public void addHistory(String action) {
+        history.add(new ComplaintHistory(action));
+    }
+
+    public List<ComplaintHistory> getHistory() {
+        return history;
     }
 
     @Override
@@ -50,9 +62,9 @@ public class Complaint {
         return "Complaint{" +
                 "id=" + id +
                 ", category='" + category + '\'' +
+                ", description='" + description + '\'' +
+                ", handler='" + handler + '\'' +
                 ", status=" + status +
-                ", assignedTo='" + assignedTo + '\'' +
-                ", resolvedAt=" + resolvedAt +
                 '}';
     }
 }
