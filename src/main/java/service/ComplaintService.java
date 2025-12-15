@@ -2,6 +2,7 @@ package service;
 
 import model.Complaint;
 import repository.ComplaintRepository;
+import java.util.List;
 
 public class ComplaintService {
 
@@ -41,4 +42,8 @@ public class ComplaintService {
             System.out.println(c);
         }
     }
+    public List<Complaint> getAllComplaints() {
+    return repository.findAll();
 }
+}
+
