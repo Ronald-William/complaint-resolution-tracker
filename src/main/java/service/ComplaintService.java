@@ -1,47 +1,44 @@
 package service;
 
-import model.*;
+import model.Complaint;
 import repository.ComplaintRepository;
 
 public class ComplaintService {
 
-    private ComplaintRepository repository = new ComplaintRepository();
+    private ComplaintRepository repository;
 
-    public void logComplaint(Actor actor, Complaint complaint) {
-        if (actor.getRole() != Role.USER) {
-            throw new RuntimeException("Only USERS can log complaints");
-        }
+    public ComplaintService() {
+        repository = new ComplaintRepository();
+    }
+
+    public void logComplaint(Complaint complaint) {
         repository.save(complaint);
     }
 
-    public void assignComplaint(Actor actor, int complaintId, String handler) {
-        if (actor.getRole() != Role.ADMIN) {
-            throw new RuntimeException("Only ADMIN can assign complaints");
+    public void assignComplaint(int id, String handler) {
+        Complaint complaint = repository.findById(id);
+        if (complaint != null) {
+            complaint.assignHandler(handler);
         }
-
-        Complaint c = repository.findById(complaintId);
-        c.assignHandler(handler);
     }
 
-    public void resolveComplaint(Actor actor, int complaintId) {
-        if (actor.getRole() != Role.HANDLER) {
-            throw new RuntimeException("Only HANDLERS can resolve complaints");
+    public void resolveComplaint(int id) {
+        Complaint complaint = repository.findById(id);
+        if (complaint != null) {
+            complaint.resolve();
         }
-
-        Complaint c = repository.findById(complaintId);
-        c.resolve();
     }
 
-    public void closeComplaint(Actor actor, int complaintId) {
-        if (actor.getRole() != Role.ADMIN) {
-            throw new RuntimeException("Only ADMIN can close complaints");
+    public void closeComplaint(int id) {
+        Complaint complaint = repository.findById(id);
+        if (complaint != null) {
+            complaint.close();
         }
-
-        Complaint c = repository.findById(complaintId);
-        c.close();
     }
 
     public void displayComplaints() {
-        repository.findAll().forEach(System.out::println);
+        for (Complaint c : repository.findAll()) {
+            System.out.println(c);
+        }
     }
 }
