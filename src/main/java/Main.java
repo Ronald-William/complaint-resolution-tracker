@@ -1,4 +1,4 @@
-import model.Complaint;
+import model.*;
 import service.ComplaintService;
 
 public class Main {
@@ -6,12 +6,16 @@ public class Main {
 
         ComplaintService service = new ComplaintService();
 
-        Complaint c1 = new Complaint(1, "Internet", "No connectivity");
-        service.logComplaint(c1);
+        Actor user = new Actor("Alice", Role.USER);
+        Actor admin = new Actor("Bob", Role.ADMIN);
+        Actor handler = new Actor("John", Role.HANDLER);
 
-        service.assignComplaint(1, "John-Handler");
-        service.resolveComplaint(1);
-        service.closeComplaint(1);
+        Complaint c1 = new Complaint(1, "Internet", "No connectivity");
+
+        service.logComplaint(user, c1);
+        service.assignComplaint(admin, 1, "John");
+        service.resolveComplaint(handler, 1);
+        service.closeComplaint(admin, 1);
 
         service.displayComplaints();
     }

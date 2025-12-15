@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class Complaint {
     private String description;
     private String handler;
     private ComplaintStatus status;
-    private List<ComplaintHistory> history = new ArrayList<>();
+    private List<String> history = new ArrayList<>();
 
     public Complaint(int id, String category, String description) {
         this.id = id;
@@ -24,47 +25,54 @@ public class Complaint {
         return id;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getHandler() {
-        return handler;
-    }
-
     public ComplaintStatus getStatus() {
         return status;
     }
 
-    public void setHandler(String handler) {
+    public void assignHandler(String handler) {
+        if (status != ComplaintStatus.OPEN) {
+            throw new RuntimeException("Complaint must be OPEN to assign handler");
+        }
         this.handler = handler;
+        this.status = ComplaintStatus.IN_PROGRESS;
+        addHistory("ASSIGNED to " + handler);
     }
 
-    // ✅ THIS IS WHAT WAS MISSING
-    public void setStatus(ComplaintStatus status) {
-        this.status = status;
+    public void resolve() {
+        if (status != ComplaintStatus.IN_PROGRESS) {
+            throw new RuntimeException("Complaint must be IN_PROGRESS to resolve");
+        }
+        this.status = ComplaintStatus.RESOLVED;
+        addHistory("RESOLVED");
     }
 
-    public void addHistory(String action) {
-        history.add(new ComplaintHistory(action));
+    public void close() {
+        if (status != ComplaintStatus.RESOLVED) {
+            throw new RuntimeException("Complaint must be RESOLVED to close");
+        }
+        this.status = ComplaintStatus.CLOSED;
+        addHistory("CLOSED");
     }
 
-    public List<ComplaintHistory> getHistory() {
-        return history;
+    private void addHistory(String action) {
+        history.add(action + " at " + LocalDateTime.now());
     }
 
     @Override
     public String toString() {
-        return "Complaint{" +
-                "id=" + id +
-                ", category='" + category + '\'' +
-                ", description='" + description + '\'' +
-                ", handler='" + handler + '\'' +
-                ", status=" + status +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Complaint{")
+          .append("id=").append(id)
+          .append(", category='").append(category).append('\'')
+          .append(", description='").append(description).append('\'')
+          .append(", handler='").append(handler).append('\'')
+          .append(", status=").append(status)
+          .append("}\n");
+
+        for (String h : history) {
+            sb.append("  - ").append(h).append("\n");
+        }
+
+        return sb.toString();
     }
 }

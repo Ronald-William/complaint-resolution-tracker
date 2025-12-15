@@ -1,78 +1,47 @@
 package service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import model.Complaint;
-import model.ComplaintHistory;
-import model.ComplaintStatus;
+import model.*;
 import repository.ComplaintRepository;
 
 public class ComplaintService {
 
     private ComplaintRepository repository = new ComplaintRepository();
 
-    public void logComplaint(Complaint complaint) {
+    public void logComplaint(Actor actor, Complaint complaint) {
+        if (actor.getRole() != Role.USER) {
+            throw new RuntimeException("Only USERS can log complaints");
+        }
         repository.save(complaint);
     }
 
-    public void assignComplaint(int id, String handler) {
-        Complaint complaint = repository.findById(id);
-        if (complaint == null) {
-            System.out.println("Complaint not found");
-            return;
+    public void assignComplaint(Actor actor, int complaintId, String handler) {
+        if (actor.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Only ADMIN can assign complaints");
         }
 
-        if (complaint.getStatus() != ComplaintStatus.OPEN) {
-            System.out.println("Complaint cannot be assigned in current state");
-            return;
-        }
-
-        complaint.setHandler(handler);
-        complaint.setStatus(ComplaintStatus.IN_PROGRESS);
-        complaint.addHistory("ASSIGNED to " + handler);
+        Complaint c = repository.findById(complaintId);
+        c.assignHandler(handler);
     }
 
-    public void resolveComplaint(int id) {
-        Complaint complaint = repository.findById(id);
-        if (complaint == null) {
-            System.out.println("Complaint not found");
-            return;
+    public void resolveComplaint(Actor actor, int complaintId) {
+        if (actor.getRole() != Role.HANDLER) {
+            throw new RuntimeException("Only HANDLERS can resolve complaints");
         }
 
-        if (complaint.getStatus() != ComplaintStatus.IN_PROGRESS) {
-            System.out.println("Only IN_PROGRESS complaints can be resolved");
-            return;
-        }
-
-        complaint.setStatus(ComplaintStatus.RESOLVED);
-        complaint.addHistory("RESOLVED");
+        Complaint c = repository.findById(complaintId);
+        c.resolve();
     }
 
-    public void closeComplaint(int id) {
-        Complaint complaint = repository.findById(id);
-        if (complaint == null) {
-            System.out.println("Complaint not found");
-            return;
+    public void closeComplaint(Actor actor, int complaintId) {
+        if (actor.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Only ADMIN can close complaints");
         }
 
-        if (complaint.getStatus() != ComplaintStatus.RESOLVED) {
-            System.out.println("Only RESOLVED complaints can be closed");
-            return;
-        }
-
-        complaint.setStatus(ComplaintStatus.CLOSED);
-        complaint.addHistory("CLOSED");
+        Complaint c = repository.findById(complaintId);
+        c.close();
     }
 
     public void displayComplaints() {
-        List<Complaint> complaints = repository.findAll();
-
-        for (Complaint c : complaints) {
-            System.out.println(c);
-            for (ComplaintHistory h : c.getHistory()) {
-                System.out.println("  - " + h.getAction() + " at " + h.getTimestamp());
-            }
-        }
+        repository.findAll().forEach(System.out::println);
     }
 }
