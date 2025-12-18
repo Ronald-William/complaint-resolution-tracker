@@ -1,49 +1,33 @@
 package service;
 
+import dao.ComplaintDAO;
 import model.Complaint;
-import repository.ComplaintRepository;
+import model.ComplaintStatus;
+
+import java.sql.SQLException;
 import java.util.List;
 
 public class ComplaintService {
 
-    private ComplaintRepository repository;
+    private ComplaintDAO dao = new ComplaintDAO();
 
-    public ComplaintService() {
-        repository = new ComplaintRepository();
+    public void logComplaint(Complaint complaint) throws SQLException {
+        dao.createComplaint(complaint);
     }
 
-    public void logComplaint(Complaint complaint) {
-        repository.save(complaint);
+    public void assignComplaint(int id, String handler) throws SQLException {
+        dao.updateStatus(id, ComplaintStatus.IN_PROGRESS);
     }
 
-    public void assignComplaint(int id, String handler) {
-        Complaint complaint = repository.findById(id);
-        if (complaint != null) {
-            complaint.assignHandler(handler);
-        }
+    public void resolveComplaint(int id) throws SQLException {
+        dao.updateStatus(id, ComplaintStatus.RESOLVED);
     }
 
-    public void resolveComplaint(int id) {
-        Complaint complaint = repository.findById(id);
-        if (complaint != null) {
-            complaint.resolve();
-        }
+    public void closeComplaint(int id) throws SQLException {
+        dao.updateStatus(id, ComplaintStatus.CLOSED);
     }
 
-    public void closeComplaint(int id) {
-        Complaint complaint = repository.findById(id);
-        if (complaint != null) {
-            complaint.close();
-        }
+    public List<Complaint> getAllComplaints() throws SQLException {
+        return dao.getAllComplaints();
     }
-
-    public void displayComplaints() {
-        for (Complaint c : repository.findAll()) {
-            System.out.println(c);
-        }
-    }
-    public List<Complaint> getAllComplaints() {
-    return repository.findAll();
 }
-}
-
