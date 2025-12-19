@@ -8,8 +8,15 @@ public class Complaint {
     private String handler;
     private ComplaintStatus status;
 
-    public Complaint(int id, String category, String description) {
+    public Complaint(int id, String category, String description, String handler, ComplaintStatus status) {
         this.id = id;
+        this.category = category;
+        this.description = description;
+        this.handler = handler;
+        this.status = status;
+    }
+
+    public Complaint(String category, String description) {
         this.category = category;
         this.description = description;
         this.status = ComplaintStatus.OPEN;
@@ -35,12 +42,20 @@ public class Complaint {
         return status;
     }
 
-    public void assignHandler(String handler) {
+    public void setHandler(String handler) {
         this.handler = handler;
-        this.status = ComplaintStatus.IN_PROGRESS;
     }
 
     public void setStatus(ComplaintStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + id +
+                " | Category: " + category +
+                " | Description: " + description +
+                " | Handler: " + handler +
+                " | Status: " + status;
     }
 }

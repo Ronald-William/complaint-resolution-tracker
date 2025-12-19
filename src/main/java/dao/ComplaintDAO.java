@@ -31,17 +31,30 @@ public class ComplaintDAO {
         ResultSet rs = st.executeQuery(sql);
 
         while (rs.next()) {
-            Complaint c = new Complaint(
+            complaints.add(
+                new Complaint(
                     rs.getInt("id"),
                     rs.getString("category"),
-                    rs.getString("description")
+                    rs.getString("description"),
+                    rs.getString("handler"),
+                    ComplaintStatus.valueOf(rs.getString("status"))
+                )
             );
-            c.assignHandler(rs.getString("handler"));
-            c.setStatus(ComplaintStatus.valueOf(rs.getString("status")));
-            complaints.add(c);
         }
 
         return complaints;
+    }
+
+    public void assignHandler(int id, String handler) throws SQLException {
+        String sql = "UPDATE complaints SET handler=?, status=? WHERE id=?";
+        Connection con = DatabaseConnection.getConnection();
+        PreparedStatement ps = con.prepareStatement(sql);
+
+        ps.setString(1, handler);
+        ps.setString(2, ComplaintStatus.IN_PROGRESS.name());
+        ps.setInt(3, id);
+
+        ps.executeUpdate();
     }
 
     public void updateStatus(int id, ComplaintStatus status) throws SQLException {

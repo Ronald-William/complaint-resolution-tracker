@@ -16,7 +16,7 @@ public class ComplaintService {
     }
 
     public void assignComplaint(int id, String handler) throws SQLException {
-        dao.updateStatus(id, ComplaintStatus.IN_PROGRESS);
+        dao.assignHandler(id, handler);
     }
 
     public void resolveComplaint(int id) throws SQLException {
@@ -29,5 +29,12 @@ public class ComplaintService {
 
     public List<Complaint> getAllComplaints() throws SQLException {
         return dao.getAllComplaints();
+    }
+
+    public void displayComplaints() throws SQLException {
+        List<Complaint> complaints = dao.getAllComplaints();
+        for (Complaint c : complaints) {
+            System.out.println(c);
+        }
     }
 }

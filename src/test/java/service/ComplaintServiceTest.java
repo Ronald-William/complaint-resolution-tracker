@@ -1,8 +1,7 @@
 package service;
 
-import org.junit.jupiter.api.Test;
-import service.ComplaintService;
 import model.Complaint;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,10 +11,10 @@ public class ComplaintServiceTest {
     void testLogComplaint() throws Exception {
 
         ComplaintService service = new ComplaintService();
-        Complaint c = new Complaint(100, "Network", "Slow speed");
 
+        Complaint c = new Complaint("Network", "Slow speed");
         service.logComplaint(c);
 
-        assertFalse(service.getAllComplaints().isEmpty());
+        assertTrue(service.getAllComplaints().size() > 0);
     }
 }
